@@ -46,9 +46,11 @@ canvas { display: block; }
 #crosshair {
   position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
   width: 24px; height: 24px;
+  transition: transform 0.1s ease-out;
 }
 .crosshair-line {
   position: absolute; background: rgba(255,255,255,0.85);
+  transition: all 0.1s ease-out;
 }
 .crosshair-line.top { width: 2px; height: 8px; top: 0; left: 50%; transform: translateX(-50%); }
 .crosshair-line.bottom { width: 2px; height: 8px; bottom: 0; left: 50%; transform: translateX(-50%); }
@@ -152,6 +154,30 @@ canvas { display: block; }
   opacity: 0; transition: opacity 0.1s;
 }
 
+/* Damage Numbers */
+.damage-number {
+  position: fixed; pointer-events: none; z-index: 110;
+  font-size: 24px; font-weight: 900; text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+  animation: damageFloat 1s ease-out forwards;
+}
+.damage-number.headshot {
+  color: #ff4444; font-size: 32px;
+}
+.damage-number.normal {
+  color: #fff;
+}
+@keyframes damageFloat {
+  0% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  100% { opacity: 0; transform: translate(-50%, -150%) scale(0.7); }
+}
+
+/* Sprint FOV indicator */
+#sprintIndicator {
+  position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%);
+  font-size: 12px; color: rgba(255,255,255,0.6); opacity: 0;
+  transition: opacity 0.3s; letter-spacing: 2px;
+}
+
 /* Weapon Switch UI */
 #weaponSlots {
   position: absolute; bottom: 90px; right: 30px;
@@ -230,6 +256,71 @@ canvas { display: block; }
   padding: 6px 16px; border-radius: 4px; display: none;
   letter-spacing: 1px;
 }
+
+/* Settings Screen */
+#settingsScreen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.92); display: none; flex-direction: column;
+  align-items: center; justify-content: center; z-index: 1002; cursor: default;
+  backdrop-filter: blur(10px);
+}
+#settingsScreen h2 {
+  font-size: 48px; color: #ff4444; letter-spacing: 6px; margin-bottom: 40px;
+  text-shadow: 0 0 20px rgba(255,68,68,0.5);
+}
+.settings-container {
+  width: 600px; max-height: 70vh; overflow-y: auto;
+  padding: 20px; background: rgba(20,20,30,0.8);
+  border: 1px solid rgba(255,68,68,0.3); border-radius: 8px;
+}
+.setting-group {
+  margin-bottom: 30px;
+}
+.setting-label {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 8px; color: #ccc; font-size: 14px; letter-spacing: 1px;
+}
+.setting-value {
+  color: #ff4444; font-weight: bold; min-width: 50px; text-align: right;
+}
+.setting-slider {
+  width: 100%; height: 6px; background: rgba(255,255,255,0.15);
+  border-radius: 3px; outline: none; cursor: pointer;
+  -webkit-appearance: none;
+}
+.setting-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 18px; height: 18px;
+  background: #ff4444; border-radius: 50%; cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,68,68,0.5);
+}
+.setting-slider::-moz-range-thumb {
+  width: 18px; height: 18px; background: #ff4444;
+  border: none; border-radius: 50%; cursor: pointer;
+  box-shadow: 0 0 10px rgba(255,68,68,0.5);
+}
+.setting-select {
+  width: 100%; padding: 8px; background: rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.2); border-radius: 4px;
+  color: #fff; font-size: 14px; cursor: pointer;
+}
+.setting-select:focus { outline: none; border-color: #ff4444; }
+.settings-buttons {
+  display: flex; gap: 15px; justify-content: center; margin-top: 30px;
+}
+.settings-btn {
+  padding: 12px 30px; font-size: 16px; background: transparent;
+  border: 2px solid #ff4444; color: #ff4444; cursor: pointer;
+  letter-spacing: 2px; transition: all 0.3s; border-radius: 4px;
+}
+.settings-btn:hover {
+  background: #ff4444; color: #fff; box-shadow: 0 0 20px rgba(255,68,68,0.3);
+}
+.settings-btn.secondary {
+  border-color: #888; color: #888;
+}
+.settings-btn.secondary:hover {
+  background: #888; color: #fff;
+}
 </style>
 </head>
 <body>
@@ -239,10 +330,77 @@ canvas { display: block; }
   <h1>SHADOW OPS</h1>
   <div class="subtitle">TACTICAL ASSAULT</div>
   <button class="start-btn" id="startBtn">START MISSION</button>
+  <button class="start-btn" id="settingsBtn" style="margin-top: 15px; font-size: 18px; padding: 12px 40px;">SETTINGS</button>
   <div class="controls-info">
     <span>WASD</span> - Move &nbsp;|&nbsp; <span>MOUSE</span> - Look &nbsp;|&nbsp; <span>LEFT CLICK</span> - Shoot<br>
     <span>R</span> - Reload &nbsp;|&nbsp; <span>1/2/3</span> - Switch Weapon &nbsp;|&nbsp; <span>SHIFT</span> - Sprint<br>
-    <span>SPACE</span> - Jump &nbsp;|&nbsp; <span>E</span> - Interact
+    <span>CTRL+SHIFT</span> - Slide &nbsp;|&nbsp; <span>SPACE</span> - Jump &nbsp;|&nbsp; <span>ESC</span> - Settings
+  </div>
+</div>
+
+<!-- Settings Screen -->
+<div id="settingsScreen">
+  <h2>SETTINGS</h2>
+  <div class="settings-container">
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>MOUSE SENSITIVITY</span>
+        <span class="setting-value" id="sensitivityValue">1.0</span>
+      </div>
+      <input type="range" class="setting-slider" id="sensitivitySlider" min="0.1" max="3.0" step="0.1" value="1.0">
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>BRIGHTNESS</span>
+        <span class="setting-value" id="brightnessValue">0.8</span>
+      </div>
+      <input type="range" class="setting-slider" id="brightnessSlider" min="0.3" max="2.0" step="0.1" value="0.8">
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>FIELD OF VIEW</span>
+        <span class="setting-value" id="fovValue">75</span>
+      </div>
+      <input type="range" class="setting-slider" id="fovSlider" min="60" max="110" step="5" value="75">
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>MASTER VOLUME</span>
+        <span class="setting-value" id="volumeValue">40%</span>
+      </div>
+      <input type="range" class="setting-slider" id="volumeSlider" min="0" max="100" step="5" value="40">
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>GRAPHICS QUALITY</span>
+      </div>
+      <select class="setting-select" id="qualitySelect">
+        <option value="low">LOW</option>
+        <option value="medium" selected>MEDIUM</option>
+        <option value="high">HIGH</option>
+        <option value="ultra">ULTRA</option>
+      </select>
+    </div>
+
+    <div class="setting-group">
+      <div class="setting-label">
+        <span>SHADOW QUALITY</span>
+      </div>
+      <select class="setting-select" id="shadowQualitySelect">
+        <option value="off">OFF</option>
+        <option value="low">LOW</option>
+        <option value="medium" selected>MEDIUM</option>
+        <option value="high">HIGH</option>
+      </select>
+    </div>
+  </div>
+  <div class="settings-buttons">
+    <button class="settings-btn" id="applySettingsBtn">APPLY</button>
+    <button class="settings-btn secondary" id="closeSettingsBtn">CLOSE</button>
   </div>
 </div>
 
@@ -329,10 +487,16 @@ canvas { display: block; }
 
   <!-- Interact Prompt -->
   <div id="interactPrompt">Press E to pick up</div>
+
+  <!-- Sprint Indicator -->
+  <div id="sprintIndicator">SPRINTING</div>
 </div>
 
 <!-- Damage Overlay -->
 <div id="damageOverlay"></div>
+
+<!-- Damage Numbers Container -->
+<div id="damageNumbers"></div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -384,16 +548,29 @@ class AudioSystem {
   }
 
   _shoot(freq, dur, vol) {
+    // Main gunshot tone - sharper and punchier
     const osc = this.ctx.createOscillator();
-    const gain = this._createGain(vol);
+    const gain = this._createGain(vol * 1.2);
     osc.type = 'sawtooth';
     osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(100, this.ctx.currentTime + dur);
+    osc.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + dur);
+    gain.gain.setValueAtTime(vol * 1.2 * this.masterVolume, this.ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur);
     osc.connect(gain);
     osc.start(); osc.stop(this.ctx.currentTime + dur);
-    // noise burst
-    this._noiseBurst(dur * 0.7, vol * 0.6);
+
+    // Secondary lower punch
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this._createGain(vol * 0.8);
+    osc2.type = 'sine';
+    osc2.frequency.setValueAtTime(freq * 0.5, this.ctx.currentTime);
+    osc2.frequency.exponentialRampToValueAtTime(40, this.ctx.currentTime + dur * 0.5);
+    gain2.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + dur * 0.5);
+    osc2.connect(gain2);
+    osc2.start(); osc2.stop(this.ctx.currentTime + dur * 0.5);
+
+    // Enhanced noise burst
+    this._noiseBurst(dur * 0.8, vol * 0.9);
   }
 
   _shotgun() {
@@ -417,23 +594,54 @@ class AudioSystem {
   }
 
   _hit() {
+    // Satisfying metallic "ting" sound for hit confirmation
     const osc = this.ctx.createOscillator();
-    const gain = this._createGain(0.2);
+    const gain = this._createGain(0.35);
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(1200, this.ctx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(800, this.ctx.currentTime + 0.05);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.05);
-    osc.connect(gain); osc.start(); osc.stop(this.ctx.currentTime + 0.05);
+    osc.frequency.setValueAtTime(2400, this.ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(1800, this.ctx.currentTime + 0.04);
+    gain.gain.setValueAtTime(0.35 * this.masterVolume, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.08);
+    osc.connect(gain); osc.start(); osc.stop(this.ctx.currentTime + 0.08);
+
+    // Second harmonic for richness
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this._createGain(0.2);
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(1600, this.ctx.currentTime);
+    osc2.frequency.exponentialRampToValueAtTime(1200, this.ctx.currentTime + 0.06);
+    gain2.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+    osc2.connect(gain2); osc2.start(); osc2.stop(this.ctx.currentTime + 0.06);
   }
 
   _kill() {
+    // Satisfying elimination sound - rising tone with impact
     const osc = this.ctx.createOscillator();
-    const gain = this._createGain(0.25);
+    const gain = this._createGain(0.4);
     osc.type = 'sine';
-    osc.frequency.setValueAtTime(600, this.ctx.currentTime);
-    osc.frequency.linearRampToValueAtTime(1200, this.ctx.currentTime + 0.1);
-    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.15);
-    osc.connect(gain); osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+    osc.frequency.setValueAtTime(400, this.ctx.currentTime);
+    osc.frequency.linearRampToValueAtTime(1600, this.ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.4 * this.masterVolume, this.ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.2);
+    osc.connect(gain); osc.start(); osc.stop(this.ctx.currentTime + 0.2);
+
+    // Additional harmonic for depth
+    const osc2 = this.ctx.createOscillator();
+    const gain2 = this._createGain(0.3);
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(800, this.ctx.currentTime);
+    osc2.frequency.linearRampToValueAtTime(2000, this.ctx.currentTime + 0.15);
+    gain2.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.18);
+    osc2.connect(gain2); osc2.start(); osc2.stop(this.ctx.currentTime + 0.18);
+
+    // Low punch
+    const osc3 = this.ctx.createOscillator();
+    const gain3 = this._createGain(0.25);
+    osc3.type = 'sawtooth';
+    osc3.frequency.setValueAtTime(150, this.ctx.currentTime);
+    osc3.frequency.exponentialRampToValueAtTime(80, this.ctx.currentTime + 0.1);
+    gain3.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.1);
+    osc3.connect(gain3); osc3.start(); osc3.stop(this.ctx.currentTime + 0.1);
   }
 
   _hurt() {
@@ -620,6 +828,16 @@ function generateMap() {
   });
 }
 
+// ----- Game Settings -----
+const gameSettings = {
+  mouseSensitivity: 1.0,
+  brightness: 0.8,
+  fov: 75,
+  masterVolume: 0.4,
+  graphicsQuality: 'medium',
+  shadowQuality: 'medium',
+};
+
 // ----- Game State -----
 const game = {
   running: false,
@@ -636,6 +854,9 @@ const game = {
     onGround: true,
     speed: 8, sprintSpeed: 13,
     isSprinting: false,
+    isSliding: false,
+    slideTimer: 0,
+    slideDirection: { x: 0, z: 0 },
     currentWeapon: 'pistol',
     weapons: {},
     canShoot: true,
@@ -735,10 +956,19 @@ function buildLevel() {
   gridHelper.position.set(MAP_SIZE * CELL_SIZE / 2, 0.01, MAP_SIZE * CELL_SIZE / 2);
   scene.add(gridHelper);
 
-  // Walls
-  const wallMat = new THREE.MeshStandardMaterial({ color: 0x556677, roughness: 0.7, metalness: 0.2 });
-  const wallMatDark = new THREE.MeshStandardMaterial({ color: 0x445566, roughness: 0.8, metalness: 0.1 });
-  const coverMat = new THREE.MeshStandardMaterial({ color: 0x665544, roughness: 0.8, metalness: 0.15 });
+  // Walls with proper depth settings to prevent transparency issues
+  const wallMat = new THREE.MeshStandardMaterial({
+    color: 0x556677, roughness: 0.7, metalness: 0.2,
+    side: THREE.FrontSide, depthWrite: true, depthTest: true
+  });
+  const wallMatDark = new THREE.MeshStandardMaterial({
+    color: 0x445566, roughness: 0.8, metalness: 0.1,
+    side: THREE.FrontSide, depthWrite: true, depthTest: true
+  });
+  const coverMat = new THREE.MeshStandardMaterial({
+    color: 0x665544, roughness: 0.8, metalness: 0.15,
+    side: THREE.FrontSide, depthWrite: true, depthTest: true
+  });
 
   const wallGeo = new THREE.BoxGeometry(CELL_SIZE, 4, CELL_SIZE);
   const coverGeo = new THREE.BoxGeometry(CELL_SIZE, 1.5, CELL_SIZE);
@@ -889,29 +1119,29 @@ function checkCollision(x, z, radius) {
 
 // ----- Raycasting for shooting -----
 function castRay(origin, direction, maxDist) {
-  const step = 0.3;
+  const step = 0.15; // Smaller step for better accuracy
   const pos = { x: origin.x, y: origin.y, z: origin.z };
   for (let d = 0; d < maxDist; d += step) {
     pos.x += direction.x * step;
     pos.y += direction.y * step;
     pos.z += direction.z * step;
 
-    // Check wall hit
-    if (isWall(pos.x, pos.z)) {
-      return { hit: true, type: 'wall', distance: d, point: { ...pos } };
-    }
-
-    // Check enemy hit
+    // Check enemy hit BEFORE wall hit for better detection
     for (const enemy of game.enemies) {
       if (!enemy.alive) continue;
       const dx = pos.x - enemy.x;
       const dy = pos.y - (enemy.y + 0.8);
       const dz = pos.z - enemy.z;
       const dist = Math.sqrt(dx*dx + dy*dy + dz*dz);
-      if (dist < 0.6) {
-        const headshot = pos.y > enemy.y + 1.2;
+      if (dist < 0.75) { // Increased hitbox size
+        const headshot = pos.y > enemy.y + 1.3;
         return { hit: true, type: 'enemy', enemy: enemy, distance: d, point: { ...pos }, headshot };
       }
+    }
+
+    // Check wall hit after enemy check
+    if (isWall(pos.x, pos.z)) {
+      return { hit: true, type: 'wall', distance: d, point: { ...pos } };
     }
   }
   return { hit: false, distance: maxDist, point: pos };
@@ -1165,14 +1395,23 @@ function killEnemy(enemy, headshot) {
   audio.play('kill');
   addKillFeed(enemy.name, headshot);
 
-  // Death particles
-  for (let i = 0; i < 8; i++) {
+  // Enhanced death particles
+  const particleCount = headshot ? 15 : 10;
+  for (let i = 0; i < particleCount; i++) {
     spawnParticle(
       enemy.x + (Math.random()-0.5)*0.5,
       0.8 + Math.random() * 0.8,
       enemy.z + (Math.random()-0.5)*0.5,
-      enemy.color, 0.15, 8
+      headshot ? 0xff3333 : enemy.color, 0.15, headshot ? 12 : 8
     );
+  }
+
+  // Kill feedback - brief screen flash
+  if (headshot) {
+    const flash = document.createElement('div');
+    flash.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(255,68,68,0.15);pointer-events:none;z-index:999;';
+    document.body.appendChild(flash);
+    setTimeout(() => document.body.removeChild(flash), 100);
   }
 
   // Maybe drop pickup
@@ -1309,6 +1548,22 @@ function updateBulletTrails(dt) {
   }
 }
 
+// ----- Damage Numbers -----
+function showDamageNumber(damage, isHeadshot, screenX, screenY) {
+  const damageNum = document.createElement('div');
+  damageNum.className = `damage-number ${isHeadshot ? 'headshot' : 'normal'}`;
+  damageNum.textContent = Math.round(damage);
+  damageNum.style.left = screenX + 'px';
+  damageNum.style.top = screenY + 'px';
+
+  const container = document.getElementById('damageNumbers') || document.body;
+  container.appendChild(damageNum);
+
+  setTimeout(() => {
+    if (damageNum.parentNode) damageNum.parentNode.removeChild(damageNum);
+  }, 1000);
+}
+
 // ----- Player Damage -----
 function dealDamageToPlayer(damage) {
   let dmg = damage;
@@ -1401,6 +1656,9 @@ function shoot() {
         }
         setTimeout(() => hm.style.opacity = '0', 100);
 
+        // Damage number display
+        showDamageNumber(dmg, result.headshot, window.innerWidth / 2 + (Math.random() - 0.5) * 60, window.innerHeight / 2 + (Math.random() - 0.5) * 60);
+
         // Blood particles
         for (let j = 0; j < 3; j++) {
           spawnParticle(result.point.x, result.point.y, result.point.z, 0xcc2222, 0.08, 3);
@@ -1429,7 +1687,10 @@ function startReload() {
   const w = WEAPONS[p.currentWeapon];
   const wState = p.weapons[p.currentWeapon];
 
-  if (p.isReloading || wState.ammo === w.magSize || wState.reserve <= 0) return;
+  // Allow reload anytime if not already reloading and have reserve ammo
+  if (p.isReloading || wState.reserve <= 0) return;
+  // Don't reload if magazine is already full
+  if (wState.ammo === w.magSize) return;
 
   p.isReloading = true;
   audio.play('reload');
@@ -1609,6 +1870,70 @@ function updateHUD() {
   }
 }
 
+// ----- Settings Functions -----
+function openSettings() {
+  document.getElementById('settingsScreen').style.display = 'flex';
+  document.getElementById('startScreen').style.display = 'none';
+  // Load current settings
+  document.getElementById('sensitivitySlider').value = gameSettings.mouseSensitivity;
+  document.getElementById('sensitivityValue').textContent = gameSettings.mouseSensitivity.toFixed(1);
+  document.getElementById('brightnessSlider').value = gameSettings.brightness;
+  document.getElementById('brightnessValue').textContent = gameSettings.brightness.toFixed(1);
+  document.getElementById('fovSlider').value = gameSettings.fov;
+  document.getElementById('fovValue').textContent = gameSettings.fov;
+  document.getElementById('volumeSlider').value = Math.round(gameSettings.masterVolume * 100);
+  document.getElementById('volumeValue').textContent = Math.round(gameSettings.masterVolume * 100) + '%';
+  document.getElementById('qualitySelect').value = gameSettings.graphicsQuality;
+  document.getElementById('shadowQualitySelect').value = gameSettings.shadowQuality;
+}
+
+function closeSettings() {
+  document.getElementById('settingsScreen').style.display = 'none';
+  if (!game.running) {
+    document.getElementById('startScreen').style.display = 'flex';
+  }
+}
+
+function applySettings() {
+  gameSettings.mouseSensitivity = parseFloat(document.getElementById('sensitivitySlider').value);
+  gameSettings.brightness = parseFloat(document.getElementById('brightnessSlider').value);
+  gameSettings.fov = parseInt(document.getElementById('fovSlider').value);
+  gameSettings.masterVolume = parseInt(document.getElementById('volumeSlider').value) / 100;
+  gameSettings.graphicsQuality = document.getElementById('qualitySelect').value;
+  gameSettings.shadowQuality = document.getElementById('shadowQualitySelect').value;
+
+  // Apply settings
+  if (camera) {
+    camera.fov = gameSettings.fov;
+    camera.updateProjectionMatrix();
+  }
+  if (renderer) {
+    renderer.toneMappingExposure = gameSettings.brightness;
+
+    // Apply shadow quality
+    const shadowSizes = { off: 0, low: 512, medium: 2048, high: 4096 };
+    renderer.shadowMap.enabled = gameSettings.shadowQuality !== 'off';
+    if (scene && scene.children) {
+      scene.traverse(obj => {
+        if (obj.isDirectionalLight && obj.shadow) {
+          const size = shadowSizes[gameSettings.shadowQuality] || 2048;
+          obj.shadow.mapSize.width = size;
+          obj.shadow.mapSize.height = size;
+        }
+      });
+    }
+
+    // Apply graphics quality
+    const pixelRatios = { low: 0.75, medium: 1, high: 1.5, ultra: 2 };
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, pixelRatios[gameSettings.graphicsQuality] || 1));
+  }
+  if (audio) {
+    audio.masterVolume = gameSettings.masterVolume;
+  }
+
+  closeSettings();
+}
+
 // ----- Game Over -----
 function gameOver() {
   game.running = false;
@@ -1636,6 +1961,23 @@ function initGame() {
   // Event listeners
   document.getElementById('startBtn').addEventListener('click', startGame);
   document.getElementById('restartBtn').addEventListener('click', restartGame);
+  document.getElementById('settingsBtn').addEventListener('click', openSettings);
+  document.getElementById('applySettingsBtn').addEventListener('click', applySettings);
+  document.getElementById('closeSettingsBtn').addEventListener('click', closeSettings);
+
+  // Settings sliders
+  document.getElementById('sensitivitySlider').addEventListener('input', e => {
+    document.getElementById('sensitivityValue').textContent = parseFloat(e.target.value).toFixed(1);
+  });
+  document.getElementById('brightnessSlider').addEventListener('input', e => {
+    document.getElementById('brightnessValue').textContent = parseFloat(e.target.value).toFixed(1);
+  });
+  document.getElementById('fovSlider').addEventListener('input', e => {
+    document.getElementById('fovValue').textContent = e.target.value;
+  });
+  document.getElementById('volumeSlider').addEventListener('input', e => {
+    document.getElementById('volumeValue').textContent = e.target.value + '%';
+  });
 
   // Pointer lock
   document.addEventListener('pointerlockchange', () => {
@@ -1646,7 +1988,8 @@ function initGame() {
 
   document.addEventListener('mousemove', e => {
     if (document.pointerLockElement && game.running) {
-      const sensitivity = 0.002;
+      const baseSensitivity = 0.002;
+      const sensitivity = baseSensitivity * gameSettings.mouseSensitivity;
       game.player.yaw -= e.movementX * sensitivity;
       game.player.pitch -= e.movementY * sensitivity;
       game.player.pitch = Math.max(-Math.PI / 2.2, Math.min(Math.PI / 2.2, game.player.pitch));
@@ -1655,6 +1998,18 @@ function initGame() {
 
   // Keyboard actions
   document.addEventListener('keydown', e => {
+    // ESC key for settings
+    if (e.code === 'Escape') {
+      if (document.getElementById('settingsScreen').style.display === 'flex') {
+        closeSettings();
+      } else if (game.running) {
+        game.running = false;
+        document.exitPointerLock();
+        openSettings();
+      }
+      return;
+    }
+
     if (!game.running) return;
     if (e.code === 'KeyR') startReload();
     if (e.code === 'Digit1') switchWeapon('pistol');
@@ -1723,9 +2078,13 @@ function restartGame() {
   const p = game.player;
   p.health = 100; p.armor = 50;
   p.x = MAP_SIZE / 2 * CELL_SIZE; p.z = (MAP_SIZE - 4) * CELL_SIZE;
+  p.y = 1.7;
   p.yaw = 0; p.pitch = 0;
   p.velX = 0; p.velY = 0; p.velZ = 0;
   p.onGround = true;
+  p.isSprinting = false;
+  p.isSliding = false;
+  p.slideTimer = 0;
   p.currentWeapon = 'pistol';
   p.canShoot = true;
   p.isReloading = false;
@@ -1751,17 +2110,42 @@ function gameLoop(timestamp) {
   const p = game.player;
 
   // ----- Player Movement -----
-  p.isSprinting = keys['ShiftLeft'] || keys['ShiftRight'];
+  // Sliding logic
+  if (p.isSliding) {
+    p.slideTimer -= dt;
+    if (p.slideTimer <= 0) {
+      p.isSliding = false;
+      p.y = 1.7;
+    } else {
+      // Continue sliding in the locked direction
+      const slidePower = (p.slideTimer / 0.6) * 18;
+      const slideX = p.slideDirection.x * slidePower * dt;
+      const slideZ = p.slideDirection.z * slidePower * dt;
+      if (!checkCollision(p.x + slideX, p.z, 0.3)) p.x += slideX;
+      if (!checkCollision(p.x, p.z + slideZ, 0.3)) p.z += slideZ;
+      p.y = 1.2; // Crouch height during slide
+    }
+  }
+
+  p.isSprinting = (keys['ShiftLeft'] || keys['ShiftRight']) && !p.isSliding;
   const speed = p.isSprinting ? p.sprintSpeed : p.speed;
 
   let moveX = 0, moveZ = 0;
   if (keys['KeyW']) { moveX += Math.sin(p.yaw); moveZ += Math.cos(p.yaw); }
   if (keys['KeyS']) { moveX -= Math.sin(p.yaw); moveZ -= Math.cos(p.yaw); }
-  if (keys['KeyA']) { moveX += Math.cos(p.yaw); moveZ -= Math.sin(p.yaw); }
-  if (keys['KeyD']) { moveX -= Math.cos(p.yaw); moveZ += Math.sin(p.yaw); }
+  if (keys['KeyA']) { moveX -= Math.cos(p.yaw); moveZ += Math.sin(p.yaw); }
+  if (keys['KeyD']) { moveX += Math.cos(p.yaw); moveZ -= Math.sin(p.yaw); }
 
   const len = Math.sqrt(moveX * moveX + moveZ * moveZ);
-  if (len > 0) {
+
+  // Start slide with Ctrl while sprinting
+  if ((keys['ControlLeft'] || keys['ControlRight']) && p.isSprinting && len > 0 && !p.isSliding && p.onGround) {
+    p.isSliding = true;
+    p.slideTimer = 0.6; // Slide duration
+    p.slideDirection = { x: moveX / len, z: moveZ / len };
+  }
+
+  if (len > 0 && !p.isSliding) {
     moveX = (moveX / len) * speed * dt;
     moveZ = (moveZ / len) * speed * dt;
 
@@ -1773,12 +2157,14 @@ function gameLoop(timestamp) {
     }
   }
 
-  // Apply movement with collision
-  const newX = p.x + moveX;
-  const newZ = p.z + moveZ;
+  // Apply movement with collision (only if not sliding)
+  if (!p.isSliding) {
+    const newX = p.x + moveX;
+    const newZ = p.z + moveZ;
 
-  if (!checkCollision(newX, p.z, 0.3)) p.x = newX;
-  if (!checkCollision(p.x, newZ, 0.3)) p.z = newZ;
+    if (!checkCollision(newX, p.z, 0.3)) p.x = newX;
+    if (!checkCollision(p.x, newZ, 0.3)) p.z = newZ;
+  }
 
   // Gravity
   p.velY -= 20 * dt;
@@ -1794,6 +2180,19 @@ function gameLoop(timestamp) {
   camera.rotation.order = 'YXZ';
   camera.rotation.y = p.yaw;
   camera.rotation.x = p.pitch;
+
+  // Sprint/Slide FOV effect (Apex-style)
+  let targetFOV = gameSettings.fov;
+  if (p.isSliding) targetFOV = gameSettings.fov + 15;
+  else if (p.isSprinting && len > 0) targetFOV = gameSettings.fov + 10;
+  camera.fov += (targetFOV - camera.fov) * dt * 8;
+  camera.updateProjectionMatrix();
+
+  // Sprint indicator
+  const sprintInd = document.getElementById('sprintIndicator');
+  if (sprintInd) {
+    sprintInd.style.opacity = (p.isSprinting && len > 0) ? '1' : '0';
+  }
 
   // Head bob
   if (len > 0 && p.onGround) {
@@ -1843,6 +2242,19 @@ function gameLoop(timestamp) {
   checkWaveComplete();
   updateHUD();
   drawMinimap();
+
+  // ----- Crosshair dynamics -----
+  const crosshair = document.getElementById('crosshair');
+  if (crosshair) {
+    let spread = 1.0;
+    if (len > 0) spread += 0.3;
+    if (p.isSprinting) spread += 0.3;
+    if (p.isSliding) spread += 0.5;
+    if (!p.onGround) spread += 0.4;
+    const w = WEAPONS[p.currentWeapon];
+    spread += w.spread * 20;
+    crosshair.style.transform = `translate(-50%, -50%) scale(${spread})`;
+  }
 
   // ----- Render -----
   renderer.render(scene, camera);
