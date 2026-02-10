@@ -2131,8 +2131,8 @@ function gameLoop(timestamp) {
   const speed = p.isSprinting ? p.sprintSpeed : p.speed;
 
   let moveX = 0, moveZ = 0;
-  if (keys['KeyW']) { moveX += Math.sin(p.yaw); moveZ += Math.cos(p.yaw); }
-  if (keys['KeyS']) { moveX -= Math.sin(p.yaw); moveZ -= Math.cos(p.yaw); }
+  if (keys['KeyW']) { moveX -= Math.sin(p.yaw); moveZ -= Math.cos(p.yaw); }
+  if (keys['KeyS']) { moveX += Math.sin(p.yaw); moveZ += Math.cos(p.yaw); }
   if (keys['KeyA']) { moveX -= Math.cos(p.yaw); moveZ += Math.sin(p.yaw); }
   if (keys['KeyD']) { moveX += Math.cos(p.yaw); moveZ -= Math.sin(p.yaw); }
 
