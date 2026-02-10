@@ -321,6 +321,141 @@ canvas { display: block; }
 .settings-btn.secondary:hover {
   background: #888; color: #fff;
 }
+
+/* Pause Overlay */
+#pauseOverlay {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7); display: none;
+  align-items: center; justify-content: center;
+  z-index: 500; cursor: default;
+  backdrop-filter: blur(4px);
+}
+#pauseOverlay .pause-text {
+  color: #fff; font-size: 28px; letter-spacing: 6px;
+  text-shadow: 0 0 20px rgba(255,255,255,0.4);
+  animation: pausePulse 1.5s ease-in-out infinite;
+}
+@keyframes pausePulse {
+  0%, 100% { opacity: 0.6; } 50% { opacity: 1; }
+}
+
+/* Buy Screen */
+#buyScreen {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(5, 8, 15, 0.92); display: none;
+  z-index: 800; cursor: default;
+  backdrop-filter: blur(6px);
+}
+#buyPanel {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 900px; max-width: 96vw; display: flex; flex-direction: column; gap: 0;
+  border: 1px solid rgba(255,70,85,0.4);
+}
+#buyHeader {
+  background: rgba(20, 25, 40, 0.98);
+  padding: 18px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 2px solid rgba(255,70,85,0.6);
+}
+#buyTitle {
+  font-size: 22px; font-weight: 900; letter-spacing: 8px; color: #ff4655;
+  text-shadow: 0 0 15px rgba(255,70,85,0.5);
+}
+#buyWaveInfo {
+  font-size: 13px; color: #aaa; letter-spacing: 3px;
+}
+#buyWaveInfo span { color: #ff4655; font-weight: bold; }
+#buyCreditDisplay {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(255,70,85,0.12); border: 1px solid rgba(255,70,85,0.4);
+  padding: 8px 18px; border-radius: 2px;
+}
+#buyCreditDisplay .credit-icon { color: #ffd700; font-size: 16px; }
+#buyCreditDisplay .credit-amount { color: #ffd700; font-size: 20px; font-weight: 900; letter-spacing: 2px; }
+#buyCreditDisplay .credit-label { color: #888; font-size: 10px; letter-spacing: 2px; }
+#buyBody {
+  display: flex; background: rgba(12, 16, 26, 0.98);
+}
+#buyCategories {
+  width: 130px; min-width: 130px;
+  border-right: 1px solid rgba(255,255,255,0.08);
+  display: flex; flex-direction: column; padding: 10px 0;
+}
+.buy-cat {
+  padding: 14px 18px; font-size: 11px; letter-spacing: 2px; color: #666;
+  cursor: pointer; border-left: 3px solid transparent;
+  transition: all 0.15s; text-transform: uppercase; user-select: none;
+}
+.buy-cat:hover { color: #ccc; background: rgba(255,255,255,0.04); }
+.buy-cat.active { color: #ff4655; border-left-color: #ff4655; background: rgba(255,70,85,0.08); }
+#buyItems {
+  flex: 1; padding: 20px; display: flex; flex-wrap: wrap; gap: 12px;
+  align-content: flex-start; min-height: 320px;
+}
+.buy-item {
+  width: 180px; background: rgba(20, 25, 40, 0.9);
+  border: 1px solid rgba(255,255,255,0.1);
+  cursor: pointer; transition: all 0.15s; position: relative;
+  display: flex; flex-direction: column;
+}
+.buy-item:hover { border-color: rgba(255,70,85,0.6); background: rgba(255,70,85,0.07); }
+.buy-item.owned { border-color: rgba(255,70,85,0.5); }
+.buy-item.equipped { border-color: #ff4655; background: rgba(255,70,85,0.12); }
+.buy-item.cant-afford { opacity: 0.4; cursor: not-allowed; }
+.buy-item-art {
+  height: 80px; display: flex; align-items: center; justify-content: center;
+  background: rgba(0,0,0,0.4); padding: 12px; position: relative; overflow: hidden;
+}
+.buy-item-art::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
+}
+.buy-weapon-icon {
+  height: 28px; border-radius: 2px; opacity: 0.95;
+}
+.buy-item-info { padding: 10px 12px 12px; flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.buy-item-name { font-size: 12px; font-weight: 900; letter-spacing: 2px; color: #fff; text-transform: uppercase; }
+.buy-item-price {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 14px; font-weight: 900; color: #ffd700; margin-top: 2px;
+}
+.buy-item-price .price-icon { font-size: 11px; }
+.buy-item-price.free { color: #4ade80; }
+.buy-item-stats {
+  display: flex; gap: 8px; margin-top: 6px; flex-wrap: wrap;
+}
+.buy-stat {
+  font-size: 9px; color: #888; letter-spacing: 1px;
+  background: rgba(255,255,255,0.05); padding: 2px 5px; border-radius: 1px;
+}
+.buy-owned-badge {
+  position: absolute; top: 6px; right: 6px;
+  background: rgba(255,70,85,0.8); color: #fff; font-size: 8px;
+  padding: 2px 6px; letter-spacing: 1px; font-weight: bold;
+}
+.buy-equipped-badge {
+  position: absolute; top: 6px; right: 6px;
+  background: #ff4655; color: #fff; font-size: 8px;
+  padding: 2px 6px; letter-spacing: 1px; font-weight: bold;
+}
+#buyFooter {
+  background: rgba(15, 20, 32, 0.98); padding: 14px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  border-top: 1px solid rgba(255,255,255,0.08);
+}
+#buyFooterInfo { font-size: 11px; color: #555; letter-spacing: 2px; }
+#buyCloseBtn {
+  padding: 10px 24px; background: transparent;
+  border: 1px solid rgba(255,70,85,0.5); color: #ff4655; cursor: pointer;
+  letter-spacing: 3px; font-size: 12px; transition: all 0.2s;
+}
+#buyCloseBtn:hover { background: rgba(255,70,85,0.15); border-color: #ff4655; }
+#currencyHUD {
+  position: absolute; bottom: 70px; left: 30px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 14px; color: #ffd700; font-weight: 900; letter-spacing: 1px;
+}
+#currencyHUD .currency-icon { font-size: 12px; }
 </style>
 </head>
 <body>
@@ -334,7 +469,8 @@ canvas { display: block; }
   <div class="controls-info">
     <span>WASD</span> - Move &nbsp;|&nbsp; <span>MOUSE</span> - Look &nbsp;|&nbsp; <span>LEFT CLICK</span> - Shoot<br>
     <span>R</span> - Reload &nbsp;|&nbsp; <span>1/2/3</span> - Switch Weapon &nbsp;|&nbsp; <span>SHIFT</span> - Sprint<br>
-    <span>CTRL+SHIFT</span> - Slide &nbsp;|&nbsp; <span>SPACE</span> - Jump &nbsp;|&nbsp; <span>ESC</span> - Settings
+    <span>CTRL+SHIFT</span> - Slide &nbsp;|&nbsp; <span>SPACE</span> - Jump &nbsp;|&nbsp; <span>ESC</span> - Settings<br>
+    Buy weapons with credits between waves &mdash; <span>B</span> or <span>ESC</span> to close shop
   </div>
 </div>
 
@@ -449,6 +585,9 @@ canvas { display: block; }
     <div class="weapon-slot active" id="slot1">PISTOL</div>
     <div class="weapon-slot" id="slot2">SMG</div>
     <div class="weapon-slot" id="slot3">SHOTGUN</div>
+    <div class="weapon-slot" id="slot4" style="display:none">RIFLE</div>
+    <div class="weapon-slot" id="slot5" style="display:none">SNIPER</div>
+    <div class="weapon-slot" id="slot6" style="display:none">LMG</div>
   </div>
 
   <!-- Wave Info -->
@@ -490,6 +629,12 @@ canvas { display: block; }
 
   <!-- Sprint Indicator -->
   <div id="sprintIndicator">SPRINTING</div>
+
+  <!-- Currency Display -->
+  <div id="currencyHUD">
+    <span class="currency-icon">&#9670;</span>
+    <span id="currencyValue">0</span>
+  </div>
 </div>
 
 <!-- Damage Overlay -->
@@ -497,6 +642,41 @@ canvas { display: block; }
 
 <!-- Damage Numbers Container -->
 <div id="damageNumbers"></div>
+
+<!-- Pause Overlay -->
+<div id="pauseOverlay">
+  <div class="pause-text">CLICK TO RESUME</div>
+</div>
+
+<!-- Buy Screen -->
+<div id="buyScreen">
+  <div id="buyPanel">
+    <div id="buyHeader">
+      <div id="buyTitle">ARMORY</div>
+      <div id="buyWaveInfo">WAVE <span id="buyWaveNum">2</span> STARTING IN <span id="buyTimer">30</span>s</div>
+      <div id="buyCreditDisplay">
+        <span class="credit-icon">&#9670;</span>
+        <span class="credit-amount" id="creditAmount">0</span>
+        <span class="credit-label">CREDITS</span>
+      </div>
+    </div>
+    <div id="buyBody">
+      <div id="buyCategories">
+        <div class="buy-cat active" data-cat="all">ALL</div>
+        <div class="buy-cat" data-cat="pistol">SIDEARM</div>
+        <div class="buy-cat" data-cat="smg">SMG</div>
+        <div class="buy-cat" data-cat="rifle">RIFLE</div>
+        <div class="buy-cat" data-cat="sniper">SNIPER</div>
+        <div class="buy-cat" data-cat="heavy">HEAVY</div>
+      </div>
+      <div id="buyItems"></div>
+    </div>
+    <div id="buyFooter">
+      <div id="buyFooterInfo">LEFT CLICK TO BUY &nbsp;|&nbsp; RIGHT CLICK TO SELL</div>
+      <button id="buyCloseBtn">CLOSE [B]</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
@@ -724,21 +904,48 @@ const WEAPONS = {
     damage: 25, fireRate: 400, magSize: 12, reserveAmmo: 72,
     reloadTime: 1200, spread: 0.015, recoil: 0.03,
     auto: false, pellets: 1, sound: 'pistol',
-    modelColor: 0x444444, modelScale: { x: 0.06, y: 0.12, z: 0.35 }
+    modelColor: 0x444444, modelScale: { x: 0.06, y: 0.12, z: 0.35 },
+    price: 0, category: 'pistol'
   },
   smg: {
     name: 'SMG', slot: 1,
     damage: 15, fireRate: 80, magSize: 30, reserveAmmo: 150,
     reloadTime: 1800, spread: 0.04, recoil: 0.015,
     auto: true, pellets: 1, sound: 'smg',
-    modelColor: 0x333333, modelScale: { x: 0.06, y: 0.1, z: 0.5 }
+    modelColor: 0x333333, modelScale: { x: 0.06, y: 0.1, z: 0.5 },
+    price: 1500, category: 'smg'
   },
   shotgun: {
     name: 'SHOTGUN', slot: 2,
     damage: 12, fireRate: 800, magSize: 6, reserveAmmo: 36,
     reloadTime: 2200, spread: 0.08, recoil: 0.08,
     auto: false, pellets: 8, sound: 'shotgun',
-    modelColor: 0x553322, modelScale: { x: 0.06, y: 0.1, z: 0.6 }
+    modelColor: 0x553322, modelScale: { x: 0.06, y: 0.1, z: 0.6 },
+    price: 1800, category: 'heavy'
+  },
+  rifle: {
+    name: 'RIFLE', slot: 3,
+    damage: 30, fireRate: 110, magSize: 25, reserveAmmo: 100,
+    reloadTime: 2000, spread: 0.022, recoil: 0.02,
+    auto: true, pellets: 1, sound: 'smg',
+    modelColor: 0x2a4a22, modelScale: { x: 0.06, y: 0.1, z: 0.58 },
+    price: 2700, category: 'rifle'
+  },
+  sniper: {
+    name: 'SNIPER', slot: 4,
+    damage: 150, fireRate: 1500, magSize: 5, reserveAmmo: 20,
+    reloadTime: 2800, spread: 0.002, recoil: 0.14,
+    auto: false, pellets: 1, sound: 'pistol',
+    modelColor: 0x1a2a44, modelScale: { x: 0.05, y: 0.08, z: 0.78 },
+    price: 4700, category: 'sniper'
+  },
+  lmg: {
+    name: 'LMG', slot: 5,
+    damage: 22, fireRate: 95, magSize: 80, reserveAmmo: 200,
+    reloadTime: 3500, spread: 0.048, recoil: 0.022,
+    auto: true, pellets: 1, sound: 'smg',
+    modelColor: 0x4a3820, modelScale: { x: 0.08, y: 0.12, z: 0.62 },
+    price: 3200, category: 'heavy'
   }
 };
 
@@ -845,6 +1052,11 @@ const game = {
   wave: 1,
   enemiesRemaining: 0,
   waveDelay: false,
+  currency: 0,
+  ownedWeapons: new Set(['pistol']),
+  buyScreenOpen: false,
+  buyTimer: 0,
+  paused: false,
   player: {
     health: 100, maxHealth: 100,
     armor: 50, maxArmor: 100,
@@ -1263,49 +1475,133 @@ function updateEnemy(enemy, dt) {
   const dx = game.player.x - enemy.x;
   const dz = game.player.z - enemy.z;
   const distToPlayer = Math.sqrt(dx * dx + dz * dz);
+  const angleToPlayer = Math.atan2(dx, dz);
 
-  // State machine
-  if (distToPlayer < 50) {
-    enemy.alertLevel = Math.min(1, enemy.alertLevel + dt * 0.5);
+  // --- State machine with hysteresis ---
+  if (distToPlayer < 55) {
+    enemy.alertLevel = Math.min(1, enemy.alertLevel + dt * 1.2);
+  } else {
+    enemy.alertLevel = Math.max(0, enemy.alertLevel - dt * 0.3);
   }
 
-  if (enemy.alertLevel > 0.3 || distToPlayer < 20) {
-    enemy.state = distToPlayer < 15 ? 'attack' : 'chase';
+  if (enemy.state === 'patrol') {
+    if (enemy.alertLevel > 0.5 || distToPlayer < 18) {
+      enemy.state = distToPlayer < 14 ? 'attack' : 'chase';
+      // Stagger start: each enemy waits a bit before rushing
+      if (!enemy.rushDelay) enemy.rushDelay = Math.random() * 0.8;
+    }
+  } else if (enemy.state === 'chase') {
+    if (distToPlayer < 14) enemy.state = 'attack';
+    else if (enemy.alertLevel < 0.1 && distToPlayer > 60) enemy.state = 'patrol';
+  } else if (enemy.state === 'attack') {
+    if (distToPlayer > 20) enemy.state = 'chase';
+    else if (enemy.alertLevel < 0.1 && distToPlayer > 60) enemy.state = 'patrol';
   }
 
-  // Movement
+  // Consume rush delay
+  if (enemy.rushDelay > 0) {
+    enemy.rushDelay -= dt;
+    if (enemy.rushDelay > 0) {
+      // Just update 3D model while waiting
+      const group = enemies3D.get(enemy.id);
+      if (group) group.position.set(enemy.x, 0, enemy.z);
+      return;
+    }
+    enemy.rushDelay = 0;
+  }
+
+  // --- Movement ---
+  const now = Date.now();
   if (enemy.state === 'chase' || enemy.state === 'attack') {
-    // Simple pathfinding - move toward player, avoid walls
-    const angle = Math.atan2(dx, dz);
-    let moveX = Math.sin(angle) * enemy.speed * dt;
-    let moveZ = Math.cos(angle) * enemy.speed * dt;
+    // LOS check: if wall blocks direct path, strafe more aggressively
+    const dirToPlayer = { x: dx / distToPlayer, y: 0, z: dz / distToPlayer };
+    const losResult = castRaySimple(enemy.x, 1.0, enemy.z, dirToPlayer, Math.min(distToPlayer, 25));
+    const hasLOS = !losResult.wallHit;
 
-    // Add some randomness for strafing during attack
-    if (enemy.state === 'attack') {
-      const strafe = Math.sin(Date.now() * 0.003 + enemy.id * 100) * enemy.speed * dt * 0.5;
-      moveX += Math.cos(angle) * strafe;
-      moveZ -= Math.sin(angle) * strafe;
+    // Strafe oscillation - unique per enemy, faster in attack state
+    const strafeFreq = enemy.state === 'attack' ? 0.0025 : 0.0015;
+    const strafeAmp = enemy.state === 'attack' ? 1.0 : 0.4;
+    const strafePhase = now * strafeFreq + enemy.id * 2.4;
+    const strafeSign = Math.sin(strafePhase);
+
+    // Approach angle: come in at a slight arc, not dead straight
+    // The perpendicular vector (right of direction to player)
+    const perpX = Math.cos(angleToPlayer);
+    const perpZ = -Math.sin(angleToPlayer);
+
+    // Desired engagement distance: each enemy type has a preferred range
+    const engageDist = enemy.type === 'sniper' ? 25 : (enemy.type === 'heavy' ? 7 : 10);
+
+    let speedFactor = 1.0;
+    if (!hasLOS) {
+      // When blocked, strafe more to find an angle
+      speedFactor = 0.7;
+    }
+    // Slow down when approaching preferred distance
+    if (distToPlayer < engageDist + 3 && distToPlayer > engageDist - 3) {
+      speedFactor *= 0.3;
+    } else if (distToPlayer < engageDist) {
+      // Too close, back off slightly
+      speedFactor *= -0.5;
     }
 
+    // Stop-and-shoot: periodically pause to aim (especially snipers)
+    if (!enemy.stopTimer) enemy.stopTimer = 0;
+    if (!enemy.isStopped) enemy.isStopped = false;
+    enemy.stopTimer -= dt;
+    if (enemy.stopTimer <= 0) {
+      const stopChance = enemy.type === 'sniper' ? 0.7 : 0.25;
+      if (Math.random() < stopChance && hasLOS && distToPlayer < 35) {
+        enemy.isStopped = true;
+        enemy.stopTimer = 0.4 + Math.random() * 0.8; // stop for 0.4-1.2s
+      } else {
+        enemy.isStopped = false;
+        enemy.stopTimer = 0.6 + Math.random() * 1.2;
+      }
+    }
+
+    let moveX = 0, moveZ = 0;
+    if (!enemy.isStopped) {
+      // Forward component: toward player at preferred range
+      const forwardX = Math.sin(angleToPlayer) * speedFactor;
+      const forwardZ = Math.cos(angleToPlayer) * speedFactor;
+      // Lateral strafe component
+      const lateralX = perpX * strafeSign * strafeAmp;
+      const lateralZ = perpZ * strafeSign * strafeAmp;
+
+      const combinedX = forwardX + lateralX;
+      const combinedZ = forwardZ + lateralZ;
+      const combinedLen = Math.sqrt(combinedX * combinedX + combinedZ * combinedZ) || 1;
+
+      moveX = (combinedX / combinedLen) * enemy.speed * dt;
+      moveZ = (combinedZ / combinedLen) * enemy.speed * dt;
+    }
+
+    // Separation from other enemies (avoid clumping)
+    game.enemies.forEach(other => {
+      if (other === enemy || !other.alive) return;
+      const sepDx = enemy.x - other.x;
+      const sepDz = enemy.z - other.z;
+      const sepDist = Math.sqrt(sepDx * sepDx + sepDz * sepDz);
+      if (sepDist < 2.0 && sepDist > 0.01) {
+        const push = (2.0 - sepDist) / 2.0 * 0.04;
+        moveX += (sepDx / sepDist) * push;
+        moveZ += (sepDz / sepDist) * push;
+      }
+    });
+
+    // Apply movement with wall sliding
     const newX = enemy.x + moveX;
     const newZ = enemy.z + moveZ;
-
-    // Wall avoidance
     if (!checkCollision(newX, enemy.z, 0.5)) enemy.x = newX;
     else {
-      // Try sliding along walls
-      if (!checkCollision(enemy.x + moveX * 0.5, enemy.z, 0.5)) enemy.x += moveX * 0.5;
+      if (!checkCollision(enemy.x + moveX * 0.3, enemy.z, 0.5)) enemy.x += moveX * 0.3;
     }
     if (!checkCollision(enemy.x, newZ, 0.5)) enemy.z = newZ;
     else {
-      if (!checkCollision(enemy.x, enemy.z + moveZ * 0.5, 0.5)) enemy.z += moveZ * 0.5;
+      if (!checkCollision(enemy.x, enemy.z + moveZ * 0.3, 0.5)) enemy.z += moveZ * 0.3;
     }
 
-    // Keep minimum distance
-    if (distToPlayer < 5 && enemy.state === 'attack') {
-      enemy.x -= Math.sin(angle) * enemy.speed * dt * 0.3;
-      enemy.z -= Math.cos(angle) * enemy.speed * dt * 0.3;
-    }
   } else {
     // Patrol
     enemy.pathTimer -= dt;
@@ -1318,59 +1614,56 @@ function updateEnemy(enemy, dt) {
     const ptDz = enemy.targetZ - enemy.z;
     const ptDist = Math.sqrt(ptDx * ptDx + ptDz * ptDz);
     if (ptDist > 1) {
-      const moveX = (ptDx / ptDist) * enemy.speed * 0.5 * dt;
-      const moveZ = (ptDz / ptDist) * enemy.speed * 0.5 * dt;
+      const moveX = (ptDx / ptDist) * enemy.speed * 0.45 * dt;
+      const moveZ = (ptDz / ptDist) * enemy.speed * 0.45 * dt;
       if (!checkCollision(enemy.x + moveX, enemy.z, 0.5)) enemy.x += moveX;
       if (!checkCollision(enemy.x, enemy.z + moveZ, 0.5)) enemy.z += moveZ;
     }
   }
 
-  // Shooting
-  if (enemy.state === 'attack' && distToPlayer < 40) {
-    const now = Date.now();
+  // --- Shooting ---
+  if ((enemy.state === 'attack' || (enemy.state === 'chase' && distToPlayer < 30)) && distToPlayer < 42) {
     if (now - enemy.lastShot > enemy.fireRate) {
       enemy.lastShot = now;
-      // Line of sight check
       const dir = { x: dx / distToPlayer, y: 0, z: dz / distToPlayer };
       const ray = castRaySimple(enemy.x, 1.0, enemy.z, dir, distToPlayer);
       if (!ray.wallHit) {
-        // Apply accuracy spread
         const spread = enemy.accuracy;
-        const hitChance = Math.max(0.2, 1 - spread * distToPlayer * 0.1);
+        const hitChance = Math.max(0.15, 1 - spread * distToPlayer * 0.08);
         if (Math.random() < hitChance) {
           dealDamageToPlayer(enemy.damage);
         }
-        // Enemy muzzle flash particle
         spawnParticle(enemy.x + dir.x * 0.5, 1.0, enemy.z + dir.z * 0.5, 0xffaa33, 0.15, 3);
       }
     }
   }
 
-  // Update 3D model
+  // --- Update 3D model ---
   const group = enemies3D.get(enemy.id);
   if (group) {
     group.position.set(enemy.x, 0, enemy.z);
-    // Face player
-    group.rotation.y = Math.atan2(dx, dz);
-    // Health bar
+    // Smoothly face player
+    const targetRot = Math.atan2(dx, dz);
+    let rotDiff = targetRot - group.rotation.y;
+    // Normalize to [-PI, PI]
+    while (rotDiff > Math.PI) rotDiff -= Math.PI * 2;
+    while (rotDiff < -Math.PI) rotDiff += Math.PI * 2;
+    group.rotation.y += rotDiff * Math.min(1, dt * 10);
+
     if (enemy._healthBar) {
       enemy._healthBar.scale.x = enemy.health / enemy.maxHealth;
       enemy._healthBar.position.x = -0.4 * (1 - enemy.health / enemy.maxHealth);
-      // Billboard - face camera
-      const hbGroup = enemy._healthBar.parent;
-      if (hbGroup) {
-        enemy._healthBar.lookAt(camera.position);
-        enemy._healthBar.parent.children.forEach(c => {
-          if (c.position.y >= 1.9) c.lookAt(camera.position);
-        });
-      }
+      enemy._healthBar.lookAt(camera.position);
+      enemy._healthBar.parent.children.forEach(c => {
+        if (c.position.y >= 1.9) c.lookAt(camera.position);
+      });
     }
-    // Walking animation
-    const legPhase = Date.now() * 0.008 + enemy.id;
+    const isMoving = enemy.state !== 'patrol' && !enemy.isStopped;
+    const legPhase = Date.now() * 0.009 + enemy.id;
+    const legAmt = isMoving ? 0.45 : 0.12;
     group.children.forEach((child, i) => {
-      if (i === 2 || i === 3) { // legs
-        child.rotation.x = Math.sin(legPhase + (i === 2 ? 0 : Math.PI)) * 0.4 *
-          (enemy.state !== 'patrol' ? 1 : 0.3);
+      if (i === 2 || i === 3) {
+        child.rotation.x = Math.sin(legPhase + (i === 2 ? 0 : Math.PI)) * legAmt;
       }
     });
   }
@@ -1743,25 +2036,32 @@ function checkWaveComplete() {
     game.player.health = Math.min(game.player.maxHealth, game.player.health + 20);
     game.player.armor = Math.min(game.player.maxArmor, game.player.armor + 10);
 
+    // Award currency: base + wave bonus
+    const waveReward = 1000 + game.wave * 200;
+    game.currency += waveReward;
+
     const announce = document.getElementById('waveAnnounce');
-    announce.textContent = 'WAVE CLEAR!';
+    announce.textContent = `WAVE CLEAR!  +${waveReward} CREDITS`;
     announce.style.opacity = '1';
+    announce.style.fontSize = '36px';
+
+    // Clean up dead enemies
+    game.enemies = game.enemies.filter(e => {
+      if (!e.alive) {
+        const g = enemies3D.get(e.id);
+        if (g) { scene.remove(g); enemies3D.delete(e.id); }
+        return false;
+      }
+      return true;
+    });
 
     setTimeout(() => {
       announce.style.opacity = '0';
+      announce.style.fontSize = '48px';
       game.wave++;
-      game.waveDelay = false;
-      // Clean up dead enemies
-      game.enemies = game.enemies.filter(e => {
-        if (!e.alive) {
-          const g = enemies3D.get(e.id);
-          if (g) { scene.remove(g); enemies3D.delete(e.id); }
-          return false;
-        }
-        return true;
-      });
-      startWave();
-    }, 3000);
+      // Open buy screen
+      openBuyScreen();
+    }, 2000);
   }
 }
 
@@ -1855,11 +2155,22 @@ function updateHUD() {
   document.getElementById('waveNumber').textContent = `WAVE ${game.wave}`;
   document.getElementById('enemyCount').textContent = `ENEMIES: ${game.enemiesRemaining}`;
   document.getElementById('scoreValue').textContent = game.score;
+  const currEl = document.getElementById('currencyValue');
+  if (currEl) currEl.textContent = game.currency;
 
-  // Weapon slots
-  ['slot1', 'slot2', 'slot3'].forEach((id, i) => {
+  // Weapon slots - show/hide and highlight based on owned weapons
+  const slotIds = ['slot1', 'slot2', 'slot3', 'slot4', 'slot5', 'slot6'];
+  const slotKeys = ['pistol', 'smg', 'shotgun', 'rifle', 'sniper', 'lmg'];
+  slotIds.forEach((id, i) => {
     const el = document.getElementById(id);
-    el.className = 'weapon-slot' + (i === w.slot ? ' active' : '');
+    if (!el) return;
+    const key = slotKeys[i];
+    if (game.ownedWeapons.has(key)) {
+      el.style.display = 'flex';
+      el.className = 'weapon-slot' + (key === p.currentWeapon ? ' active' : '');
+    } else {
+      el.style.display = 'none';
+    }
   });
 
   // Health bar color when low
@@ -1949,8 +2260,8 @@ function initGame() {
   initThree();
   audio.init();
 
-  // Init player weapons
-  Object.keys(WEAPONS).forEach(key => {
+  // Init player weapons (only starting loadout; rest purchased via buy screen)
+  ['pistol', 'smg', 'shotgun'].forEach(key => {
     const w = WEAPONS[key];
     game.player.weapons[key] = {
       ammo: w.magSize,
@@ -1964,6 +2275,12 @@ function initGame() {
   document.getElementById('settingsBtn').addEventListener('click', openSettings);
   document.getElementById('applySettingsBtn').addEventListener('click', applySettings);
   document.getElementById('closeSettingsBtn').addEventListener('click', closeSettings);
+  document.getElementById('buyCloseBtn').addEventListener('click', closeBuyScreen);
+
+  // Buy screen category tabs
+  document.querySelectorAll('.buy-cat').forEach(el => {
+    el.addEventListener('click', () => renderBuyItems(el.dataset.cat));
+  });
 
   // Settings sliders
   document.getElementById('sensitivitySlider').addEventListener('input', e => {
@@ -1981,8 +2298,31 @@ function initGame() {
 
   // Pointer lock
   document.addEventListener('pointerlockchange', () => {
-    if (!document.pointerLockElement && game.running) {
-      // Paused - could show pause menu
+    const pauseOverlay = document.getElementById('pauseOverlay');
+    if (document.pointerLockElement) {
+      // Pointer lock acquired
+      if (pauseOverlay) pauseOverlay.style.display = 'none';
+      if (game.paused && game.running) {
+        game.paused = false;
+        gameLoop();
+      }
+    } else if (game.running && !game.buyScreenOpen && !game.paused) {
+      // Pointer lock released during gameplay - show pause overlay
+      game.paused = true;
+      if (pauseOverlay) pauseOverlay.style.display = 'flex';
+    }
+  });
+
+  // Click on pause overlay or canvas to re-acquire pointer lock
+  document.getElementById('pauseOverlay').addEventListener('click', () => {
+    if (game.running && game.paused) {
+      renderer.domElement.requestPointerLock();
+    }
+  });
+
+  renderer.domElement.addEventListener('click', () => {
+    if (game.running && !document.pointerLockElement && !game.buyScreenOpen) {
+      renderer.domElement.requestPointerLock();
     }
   });
 
@@ -1998,8 +2338,12 @@ function initGame() {
 
   // Keyboard actions
   document.addEventListener('keydown', e => {
-    // ESC key for settings
+    // ESC key for settings / close buy screen
     if (e.code === 'Escape') {
+      if (game.buyScreenOpen) {
+        closeBuyScreen();
+        return;
+      }
       if (document.getElementById('settingsScreen').style.display === 'flex') {
         closeSettings();
       } else if (game.running) {
@@ -2011,10 +2355,15 @@ function initGame() {
     }
 
     if (!game.running) return;
+    if (e.code === 'KeyB' && game.buyScreenOpen) { closeBuyScreen(); return; }
+    if (game.buyScreenOpen) return;
     if (e.code === 'KeyR') startReload();
     if (e.code === 'Digit1') switchWeapon('pistol');
     if (e.code === 'Digit2') switchWeapon('smg');
     if (e.code === 'Digit3') switchWeapon('shotgun');
+    if (e.code === 'Digit4' && game.ownedWeapons.has('rifle')) switchWeapon('rifle');
+    if (e.code === 'Digit5' && game.ownedWeapons.has('sniper')) switchWeapon('sniper');
+    if (e.code === 'Digit6' && game.ownedWeapons.has('lmg')) switchWeapon('lmg');
     if (e.code === 'Space' && game.player.onGround) {
       game.player.velY = 6;
       game.player.onGround = false;
@@ -2024,10 +2373,10 @@ function initGame() {
 
   // Mouse wheel weapon switch
   document.addEventListener('wheel', e => {
-    if (!game.running) return;
-    const weapons = ['pistol', 'smg', 'shotgun'];
+    if (!game.running || game.buyScreenOpen) return;
+    const weapons = [...game.ownedWeapons].sort((a,b) => WEAPONS[a].slot - WEAPONS[b].slot);
     const current = weapons.indexOf(game.player.currentWeapon);
-    const next = (current + (e.deltaY > 0 ? 1 : -1) + 3) % 3;
+    const next = (current + (e.deltaY > 0 ? 1 : -1) + weapons.length) % weapons.length;
     switchWeapon(weapons[next]);
   });
 }
@@ -2040,11 +2389,159 @@ function switchWeapon(weaponKey) {
   updateWeaponModel();
 }
 
+// ----- Buy Screen -----
+let buyTimerInterval = null;
+
+function openBuyScreen() {
+  game.buyScreenOpen = true;
+  game.paused = true;
+  game.buyTimer = 30;
+
+  // Release pointer lock to allow UI interaction
+  document.exitPointerLock();
+  document.getElementById('pauseOverlay').style.display = 'none';
+
+  const screen = document.getElementById('buyScreen');
+  screen.style.display = 'block';
+  document.getElementById('buyWaveNum').textContent = game.wave;
+  document.getElementById('buyTimer').textContent = '30';
+  document.getElementById('creditAmount').textContent = game.currency;
+
+  renderBuyItems('all');
+
+  // Start countdown timer
+  if (buyTimerInterval) clearInterval(buyTimerInterval);
+  buyTimerInterval = setInterval(() => {
+    game.buyTimer--;
+    const el = document.getElementById('buyTimer');
+    if (el) el.textContent = game.buyTimer;
+    if (game.buyTimer <= 0) {
+      closeBuyScreen();
+    }
+  }, 1000);
+}
+
+function closeBuyScreen() {
+  if (buyTimerInterval) { clearInterval(buyTimerInterval); buyTimerInterval = null; }
+  game.buyScreenOpen = false;
+  game.waveDelay = false;
+  game.paused = false;
+  document.getElementById('buyScreen').style.display = 'none';
+
+  // Re-acquire pointer lock and start next wave
+  renderer.domElement.requestPointerLock();
+  startWave();
+  gameLoop();
+}
+
+function renderBuyItems(category) {
+  const container = document.getElementById('buyItems');
+  container.innerHTML = '';
+
+  // Update active category tab
+  document.querySelectorAll('.buy-cat').forEach(el => {
+    el.classList.toggle('active', el.dataset.cat === category);
+  });
+
+  const weaponOrder = ['pistol', 'smg', 'rifle', 'shotgun', 'sniper', 'lmg'];
+  weaponOrder.forEach(key => {
+    const w = WEAPONS[key];
+    if (!w) return;
+    if (category !== 'all' && w.category !== category) return;
+
+    const owned = game.ownedWeapons.has(key);
+    const equipped = game.player.currentWeapon === key;
+    const canAfford = game.currency >= w.price;
+    const isFree = w.price === 0;
+
+    const item = document.createElement('div');
+    item.className = 'buy-item' +
+      (equipped ? ' equipped' : owned ? ' owned' : '') +
+      (!canAfford && !owned ? ' cant-afford' : '');
+
+    // Weapon art (colored bar representing weapon silhouette)
+    const artColors = {
+      pistol: '#666', smg: '#888', shotgun: '#a0724a',
+      rifle: '#3a6a2a', sniper: '#1a3a6a', lmg: '#6a5a30'
+    };
+    const artColor = artColors[key] || '#555';
+    const wScale = w.modelScale;
+    const barW = Math.round(wScale.z * 100);
+    const barH = Math.round(wScale.y * 100);
+
+    item.innerHTML = `
+      <div class="buy-item-art" style="background:rgba(0,0,0,0.5)">
+        <div class="buy-weapon-icon" style="
+          width:${Math.min(barW, 130)}px; height:${Math.max(barH, 16)}px;
+          background:linear-gradient(90deg, ${artColor}cc, ${artColor});
+          border-radius:2px; box-shadow:0 2px 8px rgba(0,0,0,0.5);
+        "></div>
+      </div>
+      <div class="buy-item-info">
+        <div class="buy-item-name">${w.name}</div>
+        <div class="buy-item-price ${isFree ? 'free' : ''}">
+          ${isFree ? '<span>FREE</span>' : `<span class="price-icon">&#9670;</span><span>${w.price}</span>`}
+        </div>
+        <div class="buy-item-stats">
+          <span class="buy-stat">DMG ${w.damage}</span>
+          <span class="buy-stat">MAG ${w.magSize}</span>
+          <span class="buy-stat">${w.auto ? 'AUTO' : 'SEMI'}</span>
+        </div>
+      </div>
+      ${equipped ? '<div class="buy-equipped-badge">EQUIPPED</div>' : owned ? '<div class="buy-owned-badge">OWNED</div>' : ''}
+    `;
+
+    // Left click: buy / equip
+    item.addEventListener('click', () => {
+      if (owned) {
+        // Equip it
+        switchWeapon(key);
+        renderBuyItems(category);
+        return;
+      }
+      if (!canAfford) return;
+      // Buy
+      game.currency -= w.price;
+      game.ownedWeapons.add(key);
+      // Init ammo if not already
+      if (!game.player.weapons[key]) {
+        game.player.weapons[key] = { ammo: w.magSize, reserve: w.reserveAmmo };
+      }
+      switchWeapon(key);
+      // Show slot
+      const slotEl = document.getElementById(`slot${w.slot + 1}`);
+      if (slotEl) slotEl.style.display = 'flex';
+      document.getElementById('creditAmount').textContent = game.currency;
+      renderBuyItems(category);
+    });
+
+    // Right click: sell (get partial credit back, not pistol)
+    item.addEventListener('contextmenu', e => {
+      e.preventDefault();
+      if (!owned || isFree) return;
+      const sellPrice = Math.floor(w.price * 0.5);
+      game.currency += sellPrice;
+      game.ownedWeapons.delete(key);
+      if (equipped) switchWeapon('pistol');
+      // Hide slot if not a default weapon
+      if (w.slot >= 3) {
+        const slotEl = document.getElementById(`slot${w.slot + 1}`);
+        if (slotEl) slotEl.style.display = 'none';
+      }
+      document.getElementById('creditAmount').textContent = game.currency;
+      renderBuyItems(category);
+    });
+
+    container.appendChild(item);
+  });
+}
+
 function startGame() {
   document.getElementById('startScreen').style.display = 'none';
   document.getElementById('hud').style.display = 'block';
   renderer.domElement.requestPointerLock();
   game.running = true;
+  game.paused = false;
   startWave();
   gameLoop();
 }
@@ -2074,6 +2571,17 @@ function restartGame() {
   game.particles = [];
   game.bulletTrails = [];
   game.killFeed = [];
+  game.currency = 0;
+  game.ownedWeapons = new Set(['pistol']);
+  game.buyScreenOpen = false;
+  game.paused = false;
+  if (buyTimerInterval) { clearInterval(buyTimerInterval); buyTimerInterval = null; }
+  document.getElementById('buyScreen').style.display = 'none';
+  // Hide purchased weapon slots
+  ['slot4','slot5','slot6'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
 
   const p = game.player;
   p.health = 100; p.armor = 50;
@@ -2088,7 +2596,8 @@ function restartGame() {
   p.currentWeapon = 'pistol';
   p.canShoot = true;
   p.isReloading = false;
-  Object.keys(WEAPONS).forEach(key => {
+  // Only init starting weapons; others become available via buy screen
+  ['pistol', 'smg', 'shotgun'].forEach(key => {
     p.weapons[key] = { ammo: WEAPONS[key].magSize, reserve: WEAPONS[key].reserveAmmo };
   });
 
@@ -2103,7 +2612,7 @@ function restartGame() {
 // ----- Main Loop -----
 let lastTime = 0;
 function gameLoop(timestamp) {
-  if (!game.running) return;
+  if (!game.running || game.paused) return;
   requestAnimationFrame(gameLoop);
 
   const dt = Math.min(clock.getDelta(), 0.05);
